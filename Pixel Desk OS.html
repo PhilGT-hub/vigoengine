@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My HTML + CSS + JS</title>
+  <style>body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  height: 100vh;
+  overflow: hidden;
+  color: #000000;
+}
+
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.form-container {
+  background-color: #1f1f1f;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  width: 320px;
+  text-align: center;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ffffff;
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+}
+
+input::placeholder {
+  color: #000000;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #0078d4, #005fa3);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #005fa3, #003f73);
+}
+
+#errorMessage {
+  color: #ff5555;
+  display: none;
+  margin-top: 10px;
+}
+
+#desktop {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #005fa3, #003f73);
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.icon {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  user-select: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.window {
+  width: 400px;
+  height: 350px;
+  background: #2c2c2c;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  border: 2px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden;
+}
+
+.window-header {
+  background: linear-gradient(135deg, #0078d4, #005fa3);
+  color: white;
+  padding: 12px;
+  cursor: move;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.window-content {
+  padding: 10px;
+  flex-grow: 1;
+  background: #1f1f1f;
+  overflow: auto;
+}
+
+textarea {
+  width: calc(100% - 10px);
+  height: calc(100% - 50px);
+  resize: none;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #2a2a2a;
+  color: #000000;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.close-btn {
+  background-color: #ff5555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.close-btn:hover {
+  background-color: #cc4444;
+}
+
+#fileSystem span {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 5px 5px 5px 0;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: #2a2a2a;
+  color: #ddd;
+  font-size: 14px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+#fileSystem span:hover {
+  background: #3a3a3a;
+}
+</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PixelDesk</title>
+  <link rel="stylesheet" href="style.css"> <!-- Assuming you have a style.css -->
+</head>
+<body>
+
+<!-- Account Setup Page -->
+<div id="setCredentialsPage" style="display:none;">
+  <form id="setCredentialsForm">
+    <h2>Set up PixelDesk Account</h2>
+    <input type="text" id="newUsername" placeholder="New Username" required><br>
+    <input type="password" id="newPassword" placeholder="New Password" required><br>
+    <button type="submit">Set Up</button>
+    <p id="errorMessage" style="display:none; color:red;">Something went wrong!</p>
+  </form>
+</div>
+
+<!-- Login Page -->
+<div id="loginPage" style="display:none;">
+  <form id="loginForm">
+    <h2>Login to PixelDesk</h2>
+    <input type="text" id="username" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+    <p id="errorMessage" style="display:none; color:red;">Incorrect username or password!</p>
+  </form>
+</div>
+
+<!-- Desktop -->
+<div id="desktop" style="display:none;">
+  <!-- Desktop Icons -->
+  <div id="icons">
+    <div id="notepadIcon" class="desktop-icon">📝 Notepad</div>
+    <div id="fileExplorerIcon" class="desktop-icon">📁 File Explorer</div>
+    <div id="resetIcon" class="desktop-icon">⚙️ Factory Reset</div>
+  </div>
+
+  <!-- Windows -->
+
+  <!-- Notepad Window -->
+  <div id="notepadWindow" class="window" style="display:none; flex-direction:column;">
+    <div class="window-header">
+      Notepad
+      <button onclick="closeWindow('notepadWindow')" style="float:right;">✖</button>
+    </div>
+    <div class="window-body" style="flex:1; display:flex; flex-direction:column;">
+      <textarea id="notepadContent" style="flex:1; width:100%;"></textarea>
+      <button id="saveNotepadBtn">Save</button>
+    </div>
+  </div>
+
+  <!-- File Explorer Window -->
+  <div id="fileExplorerWindow" class="window" style="display:none; flex-direction:column;" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="window-header">
+      File Explorer
+      <button onclick="closeWindow('fileExplorerWindow')" style="float:right;">✖</button>
+    </div>
+    <div class="window-body" style="flex:1; overflow:auto;">
+      <ul id="fileSystem"></ul>
+    </div>
+  </div>
+
+  <!-- Image Viewer Window -->
+  <div id="imgWindow" class="window" style="display:none; flex-direction:column;">
+    <div class="window-header">
+      Image Viewer
+      <button onclick="closeWindow('imgWindow')" style="float:right;">✖</button>
+    </div>
+    <div class="window-body" style="overflow:auto;">
+      <img id="imgViewer" style="max-width:100%; max-height:400px;">
+    </div>
+  </div>
+
+  <!-- Video Player Window -->
+  <div id="videoWindow" class="window" style="display:none; flex-direction:column;">
+    <div class="window-header">
+      Video Player
+      <button onclick="closeWindow('videoWindow')" style="float:right;">✖</button>
+    </div>
+    <div class="window-body" style="overflow:auto;">
+      <video id="videoViewer" controls style="width:100%; max-height:400px;"></video>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script> <!-- Your main JavaScript -->
+</body>
+</html>
+
+<script>
+let editingFileIndex = null;
+
+if (!localStorage.getItem('isAccountSetup')) {
+  document.getElementById("setCredentialsPage").style.display = "flex";
+} else {
+  document.getElementById("loginPage").style.display = "flex";
+}
+
+document.getElementById('setCredentialsForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const username = document.getElementById("newUsername").value;
+  const password = document.getElementById("newPassword").value;
+  if (username && password) {
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    localStorage.setItem("isAccountSetup", "true");
+    location.reload();
+  }
+});
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const storedUsername = localStorage.getItem("username");
+  const storedPassword = localStorage.getItem("password");
+
+  if (username === storedUsername && password === storedPassword) {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("desktop").style.display = "flex";
+  } else {
+    document.getElementById("errorMessage").style.display = "block";
+  }
+});
+
+document.getElementById("notepadIcon").onclick = function () {
+  const win = document.getElementById("notepadWindow");
+  win.style.display = "flex";
+  makeDraggable(win);
+  editingFileIndex = null;
+  document.getElementById("notepadContent").value = "";
+};
+
+document.getElementById("fileExplorerIcon").onclick = function () {
+  const win = document.getElementById("fileExplorerWindow");
+  win.style.display = "flex";
+  makeDraggable(win);
+  loadFiles();
+};
+
+document.getElementById("resetIcon").onclick = function () {
+  if (confirm("Are you sure?")) {
+    localStorage.clear();
+    location.reload();
+  }
+};
+
+function closeWindow(windowId) {
+  document.getElementById(windowId).style.display = "none";
+}
+
+function makeDraggable(win) {
+  const header = win.querySelector('.window-header');
+  let isDragging = false, offsetX = 0, offsetY = 0;
+  header.onmousedown = (e) => {
+    isDragging = true;
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+  };
+  document.onmousemove = (e) => {
+    if (isDragging) {
+      win.style.left = e.clientX - offsetX + "px";
+      win.style.top = e.clientY - offsetY + "px";
+    }
+  };
+  document.onmouseup = () => isDragging = false;
+}
+
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  e.preventDefault();
+  const filesArray = Array.from(e.dataTransfer.files);
+  filesArray.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const savedFiles = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+      savedFiles.push({ name: file.name, content: ev.target.result });
+      localStorage.setItem("downloadedFiles", JSON.stringify(savedFiles));
+      loadFiles();
+    };
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (["txt", "html"].includes(ext)) {
+      reader.readAsText(file);
+    } else if (["png", "mp4"].includes(ext)) {
+      reader.readAsDataURL(file);
+    }
+  });
+}
+
+document.getElementById("saveNotepadBtn").onclick = function () {
+  const text = document.getElementById("notepadContent").value.trim();
+  if (!text) return alert("Cannot save empty file!");
+
+  let savedFiles = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+
+  if (editingFileIndex !== null) {
+    savedFiles[editingFileIndex].content = text;
+  } else {
+    const filename = prompt("Filename:", "newfile.txt");
+    if (!filename) return;
+    savedFiles.push({ name: filename, content: text });
+  }
+
+  localStorage.setItem("downloadedFiles", JSON.stringify(savedFiles));
+  loadFiles();
+  document.getElementById("notepadContent").value = "";
+  editingFileIndex = null;
+};
+
+function loadFiles() {
+  const list = document.getElementById("fileSystem");
+  list.innerHTML = "";
+  const files = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+
+  files.forEach((file, index) => {
+    const li = document.createElement("li");
+
+    const fileSpan = document.createElement("span");
+    fileSpan.textContent = file.name;
+    fileSpan.style.cursor = "pointer";
+    fileSpan.onclick = () => openFile(file, index);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.style.marginLeft = "10px";
+    deleteBtn.onclick = () => {
+      if (confirm(`Delete ${file.name}?`)) {
+        files.splice(index, 1);
+        localStorage.setItem("downloadedFiles", JSON.stringify(files));
+        loadFiles();
+      }
+    };
+
+    li.appendChild(fileSpan);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+  });
+}
+
+function openFile(file, index) {
+  if (file.name.endsWith(".txt")) {
+    const win = document.getElementById("notepadWindow");
+    win.style.display = "flex";
+    makeDraggable(win);
+    document.getElementById("notepadContent").value = file.content;
+    editingFileIndex = index;
+  } else {
+    const fileWin = document.createElement("div");
+    fileWin.className = "window";
+    fileWin.style.display = "flex";
+    fileWin.style.top = "150px";
+    fileWin.style.left = "150px";
+    fileWin.innerHTML = `
+      <div class="window-header">
+        <span>${file.name}</span>
+        <button onclick="this.closest('.window').remove()">✖</button>
+      </div>
+      <div style="padding:10px;max-width:100%;max-height:100%;">
+        ${
+          file.name.endsWith(".png")
+            ? `<img src="${file.content}" style="max-width:400px;">`
+            : file.name.endsWith(".mp4")
+            ? `<video controls src="${file.content}" style="max-width:400px;"></video>`
+            : file.name.endsWith(".html")
+            ? `<iframe srcdoc="${file.content.replace(/"/g, '&quot;')}" style="width:400px; height:300px; border:none;"></iframe>`
+            : "Unsupported format"
+        }
+      </div>
+    `;
+    document.body.appendChild(fileWin);
+    makeDraggable(fileWin);
+  }
+}
+
+</script>
+</body>
+</html>
+      
