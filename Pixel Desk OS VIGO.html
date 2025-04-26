@@ -1,0 +1,568 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My HTML + CSS + JS</title>
+  <style>body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  height: 100vh;
+  overflow: hidden;
+  color: #000000;
+}
+
+/* New login/setup overlay */
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+
+/* Center login and setup screens */
+#setCredentialsPage, #loginPage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Login/setup form card */
+.form-container, .auth-card {
+  background-color: #1f1f1f;
+  padding: 40px 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  width: 320px;
+  text-align: center;
+  animation: popIn 0.5s ease;
+}
+
+/* Smooth appear animation */
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #2a2a2a;
+  color: #09ff00;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #0078d4, #005fa3);
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #005fa3, #003f73);
+  transform: translateY(-2px);
+}
+
+#errorMessage {
+  color: #ff5555;
+  display: none;
+  margin-top: 10px;
+}
+
+/* Desktop icons */
+#desktop {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #005fa3, #003f73);
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.icon, .desktop-icon {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  user-select: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.icon:hover, .desktop-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+/* Window styles */
+.window {
+  width: 400px;
+  height: 350px;
+  background: #2c2c2c;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  border: 2px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden;
+}
+
+.window-header {
+  background: linear-gradient(135deg, #0078d4, #005fa3);
+  color: rgb(0, 0, 0);
+  padding: 12px;
+  cursor: move;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.window-content {
+  padding: 10px;
+  flex-grow: 1;
+  background: #1f1f1f;
+  overflow: auto;
+}
+
+/* Notepad textarea */
+textarea {
+  width: calc(100% - 20px);
+  height: calc(100% - 60px);
+  resize: none;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #2a2a2a;
+  color: #000000;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+/* Close button */
+.close-btn {
+  background-color: #ff5555;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.close-btn:hover {
+  background-color: #cc4444;
+}
+
+/* File system styling */
+#fileSystem span {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 5px 5px 5px 0;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: #2a2a2a;
+  color: #000000;
+  font-size: 14px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+#fileSystem span:hover {
+  background: #3a3a3a;
+}
+</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PixelDesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Account Setup Page -->
+<div id="setCredentialsPage" style="display:none;">
+  <form id="setCredentialsForm">
+    <h2>Set up PixelDesk Account</h2>
+    <input type="text" id="newUsername" placeholder="New Username" required><br>
+    <input type="password" id="newPassword" placeholder="New Password" required><br>
+    <button type="submit">Set Up</button>
+    <p id="errorMessage" style="display:none; color:red;">Something went wrong!</p>
+  </form>
+</div>
+
+<!-- Login Page -->
+<div id="loginPage" style="display:none;">
+  <form id="loginForm">
+    <h2>Login to PixelDesk</h2>
+    <input type="text" id="username" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+    <p id="errorMessage" style="display:none; color:red;">Incorrect username or password!</p>
+  </form>
+</div>
+
+<!-- Desktop -->
+<div id="desktop" style="display:none;">
+  <!-- Desktop Icons -->
+  <div id="icons">
+    <div id="notepadIcon" class="desktop-icon">📝 Notepad</div>
+    <div id="fileExplorerIcon" class="desktop-icon">📁 File Explorer</div>
+    <div id="settingsIcon" class="desktop-icon">⚙️ Settings</div>
+    <div id="resetIcon" class="desktop-icon">🗑️ Factory Reset</div>
+  </div>
+
+  <!-- Windows -->
+
+  <!-- Notepad Window -->
+  <div id="notepadWindow" class="window" style="display:none;">
+    <div class="window-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>Notepad</span>
+      <button onclick="closeWindow('notepadWindow')">✖</button>
+    </div>
+    <div style="padding: 10px;">
+      <button id="saveNotepadBtn" style="margin-bottom: 10px;">Save</button>
+      <textarea id="notepadContent" style="width: 100%; height: 300px; resize: none;"></textarea>
+    </div>
+  </div>
+
+  <!-- File Explorer Window -->
+  <div id="fileExplorerWindow" class="window" style="display:none; flex-direction:column;" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="window-header">
+      File Explorer
+      <button onclick="closeWindow('fileExplorerWindow')" style="float:right;">✖</button>
+    </div>
+    <div class="window-body" style="flex:1; overflow:auto;">
+      <ul id="fileSystem"></ul>
+    </div>
+  </div>
+
+  <!-- Settings Window -->
+  <div id="settingsWindow" class="window" style="display:none; flex-direction:column;">
+    <div class="window-header">
+      Settings
+      <button onclick="closeWindow('settingsWindow')" style="float:right;">✖</button>
+    </div>
+    <div class="window-body" style="flex:1; overflow:auto; padding: 10px;">
+      <button id="setWallpaperBtn" style="margin-bottom: 10px;">Set Wallpaper</button>
+      
+      <h3>Change Username</h3>
+      <input type="text" id="changeUsernameInput" placeholder="New Username" style="width: 100%; margin-bottom: 10px;">
+      <button id="changeUsernameBtn" style="width: 100%;">Change Username</button>
+
+      <h3 style="margin-top: 20px;">Change Password</h3>
+      <input type="password" id="changePasswordInput" placeholder="New Password" style="width: 100%; margin-bottom: 10px;">
+      <button id="changePasswordBtn" style="width: 100%;">Change Password</button>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+<script>
+let editingFileIndex = null;
+
+// Set saved wallpaper on load
+const savedWallpaper = localStorage.getItem("wallpaper");
+if (savedWallpaper) {
+  document.getElementById("desktop").style.backgroundImage = `url(${savedWallpaper})`;
+}
+
+// Initial account setup
+if (!localStorage.getItem('isAccountSetup')) {
+  document.getElementById("setCredentialsPage").style.display = "flex";
+} else {
+  document.getElementById("loginPage").style.display = "flex";
+}
+
+// Set credentials
+document.getElementById('setCredentialsForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const username = document.getElementById("newUsername").value;
+  const password = document.getElementById("newPassword").value;
+  if (username && password) {
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    localStorage.setItem("isAccountSetup", "true");
+    location.reload();
+  }
+});
+
+// Login form
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const storedUsername = localStorage.getItem("username");
+  const storedPassword = localStorage.getItem("password");
+
+  if (username === storedUsername && password === storedPassword) {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("desktop").style.display = "flex";
+  } else {
+    document.getElementById("errorMessage").style.display = "block";
+  }
+});
+
+// Desktop icons
+document.getElementById("notepadIcon").onclick = function () {
+  const win = document.getElementById("notepadWindow");
+  win.style.display = "flex";
+  makeDraggable(win);
+  editingFileIndex = null;
+  document.getElementById("notepadContent").value = "";
+};
+
+document.getElementById("fileExplorerIcon").onclick = function () {
+  const win = document.getElementById("fileExplorerWindow");
+  win.style.display = "flex";
+  makeDraggable(win);
+  loadFiles();
+};
+
+document.getElementById("settingsIcon").onclick = function () {
+  const win = document.getElementById("settingsWindow");
+  win.style.display = "flex";
+  makeDraggable(win);
+};
+
+document.getElementById("resetIcon").onclick = function () {
+  if (confirm("Are you sure?")) {
+    localStorage.clear();
+    location.reload();
+  }
+};
+
+// Set wallpaper button
+document.getElementById("setWallpaperBtn").onclick = function () {
+  const url = prompt("Enter image URL for wallpaper:");
+  if (url && url.trim() !== "") {
+    document.getElementById("desktop").style.backgroundImage = `url(${url.trim()})`;
+    localStorage.setItem("wallpaper", url.trim());
+  }
+};
+
+// NEW: Change Username
+const changeUsernameBtn = document.createElement("button");
+changeUsernameBtn.textContent = "Change Username";
+changeUsernameBtn.onclick = function () {
+  const newUsername = prompt("Enter new username:");
+  if (newUsername && newUsername.trim() !== "") {
+    localStorage.setItem("username", newUsername.trim());
+    alert("Username changed successfully!");
+  }
+};
+
+// NEW: Change Password
+const changePasswordBtn = document.createElement("button");
+changePasswordBtn.textContent = "Change Password";
+changePasswordBtn.onclick = function () {
+  const newPassword = prompt("Enter new password:");
+  if (newPassword && newPassword.trim() !== "") {
+    localStorage.setItem("password", newPassword.trim());
+    alert("Password changed successfully!");
+  }
+};
+
+// Append new settings buttons
+document.querySelector("#settingsWindow .window-body").appendChild(changeUsernameBtn);
+document.querySelector("#settingsWindow .window-body").appendChild(changePasswordBtn);
+
+// Close windows
+function closeWindow(windowId) {
+  document.getElementById(windowId).style.display = "none";
+}
+
+// Dragging windows
+function makeDraggable(win) {
+  const header = win.querySelector('.window-header');
+  let isDragging = false, offsetX = 0, offsetY = 0;
+
+  header.onmousedown = (e) => {
+    isDragging = true;
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+
+    // Bring window to front
+    win.style.zIndex = Date.now();
+  };
+
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      win.style.left = e.clientX - offsetX + "px";
+      win.style.top = e.clientY - offsetY + "px";
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+}
+
+// Drag and drop file support
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  e.preventDefault();
+  const filesArray = Array.from(e.dataTransfer.files);
+  filesArray.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const savedFiles = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+      savedFiles.push({ name: file.name, content: ev.target.result });
+      localStorage.setItem("downloadedFiles", JSON.stringify(savedFiles));
+      loadFiles();
+    };
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (["txt", "html"].includes(ext)) {
+      reader.readAsText(file);
+    } else if (["png", "mp4"].includes(ext)) {
+      reader.readAsDataURL(file);
+    }
+  });
+}
+
+// Save Notepad files
+document.getElementById("saveNotepadBtn").onclick = function () {
+  const text = document.getElementById("notepadContent").value.trim();
+  if (!text) return alert("Cannot save empty file!");
+
+  let savedFiles = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+
+  if (editingFileIndex !== null) {
+    savedFiles[editingFileIndex].content = text;
+    localStorage.setItem("downloadedFiles", JSON.stringify(savedFiles));
+    loadFiles();
+    alert("File saved!");
+  } else {
+    const filename = prompt("Filename:", "newfile.txt");
+    if (!filename) return;
+    savedFiles.push({ name: filename.trim(), content: text });
+    localStorage.setItem("downloadedFiles", JSON.stringify(savedFiles));
+    loadFiles();
+    alert("New file created!");
+  }
+
+  document.getElementById("notepadContent").value = "";
+  editingFileIndex = null;
+};
+
+// New folder creation
+document.getElementById("newFolderBtn").onclick = function () {
+  const folderName = prompt("Enter folder name:");
+  if (folderName && folderName.trim() !== "") {
+    let savedFiles = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+    savedFiles.push({ name: folderName.trim() + "/", content: "" });
+    localStorage.setItem("downloadedFiles", JSON.stringify(savedFiles));
+    loadFiles();
+  }
+};
+
+// Load files into explorer
+function loadFiles() {
+  const list = document.getElementById("fileSystem");
+  list.innerHTML = "";
+  const files = JSON.parse(localStorage.getItem("downloadedFiles")) || [];
+
+  files.forEach((file, index) => {
+    const li = document.createElement("li");
+
+    const fileSpan = document.createElement("span");
+    fileSpan.textContent = file.name;
+    fileSpan.style.cursor = "pointer";
+    fileSpan.onclick = () => openFile(file, index);
+
+    const renameBtn = document.createElement("button");
+    renameBtn.textContent = "✏️";
+    renameBtn.style.marginLeft = "10px";
+    renameBtn.onclick = () => {
+      const newName = prompt(`Rename ${file.name} to:`, file.name);
+      if (newName && newName.trim() !== "") {
+        files[index].name = newName.trim();
+        localStorage.setItem("downloadedFiles", JSON.stringify(files));
+        loadFiles();
+      }
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.style.marginLeft = "10px";
+    deleteBtn.onclick = () => {
+      if (confirm(`Delete ${file.name}?`)) {
+        files.splice(index, 1);
+        localStorage.setItem("downloadedFiles", JSON.stringify(files));
+        loadFiles();
+      }
+    };
+
+    li.appendChild(fileSpan);
+    li.appendChild(renameBtn);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+  });
+}
+
+// Open file in Notepad if it's a text file
+function openFile(file, index) {
+  if (file.name.endsWith(".txt")) {
+    const win = document.getElementById("notepadWindow");
+    win.style.display = "flex";
+    makeDraggable(win);
+    document.getElementById("notepadContent").value = file.content;
+    editingFileIndex = index;
+  } else {
+    alert("This file type is not editable yet!");
+  }
+}
+
+</script>
+</body>
+</html>
+      
