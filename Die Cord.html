@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My HTML + CSS + JS</title>
+  <style>body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+#messenger {
+    background: #333;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    background: #444;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#input-area {
+    display: flex;
+    gap: 5px;
+}
+
+#input-area input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+#sendBtn {
+    padding: 10px 15px;
+    border: none;
+    background: #00bcd4;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#sendBtn:hover {
+    background: #0097a7;
+}
+</style>
+</head>
+<body>
+<h1>Hello World</h1>
+<p>This is HTML</p>a<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Messenger</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="messenger">
+        <div id="messages"></div>
+        <div id="input-area">
+            <input type="text" id="username" placeholder="Your name...">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+const messagesDiv = document.getElementById('messages');
+const sendBtn = document.getElementById('sendBtn');
+const messageInput = document.getElementById('messageInput');
+const usernameInput = document.getElementById('username');
+
+let messages = [];
+
+// Function to render messages
+function renderMessages() {
+    messagesDiv.innerHTML = '';
+    messages.forEach(msg => {
+        const messageElement = document.createElement('div');
+        messageElement.innerHTML = `<strong>${msg.username}:</strong> ${msg.text}`;
+        messagesDiv.appendChild(messageElement);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Function to send a message
+function sendMessage() {
+    const text = messageInput.value.trim();
+    const username = usernameInput.value.trim() || "Anonymous";
+    if (text !== '') {
+        messages.push({ username, text });
+        messageInput.value = '';
+        renderMessages();
+    }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+</script>
+</body>
+</html>
+      
